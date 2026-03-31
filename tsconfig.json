@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true
+  },
+  "references": [
+    { "path": "./packages/mcp" },
+    { "path": "./packages/scanner" },
+    { "path": "./packages/watcher" },
+    { "path": "./packages/generator" },
+    { "path": "./packages/bootstrapper" },
+    { "path": "./packages/cli" }
+  ]
+}

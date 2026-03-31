@@ -1,0 +1,11 @@
+export { createServer, startServer } from './server.js';
+export { ContextCache } from './context-cache.js';
+export type { CachedContext } from './context-cache.js';
+export { DecisionStore } from './decision-store.js';
+export type { DecisionRecord } from './decision-store.js';
+export { PROJECT_ROOT, isContextFresh, runFullPipeline, runIncrementalPipeline } from './pipeline.js';
+export { handleGetConventions } from './tools/get-conventions.js';
+export { handleGetContext } from './tools/get-context.js';
+export { handleEnrichPrompt } from './tools/enrich-prompt.js';
+export { handleLogDecision } from './tools/log-decision.js';
+export const VERSION = '0.1.0';

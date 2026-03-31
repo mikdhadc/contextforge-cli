@@ -1,0 +1,36 @@
+{
+  "name": "contextforge",
+  "description": "ContextForge CLI — scan, generate, audit, and manage AI context files for your codebase",
+  "keywords": ["cli", "contextforge", "ai", "context", "conventions", "mcp", "claude-code", "cursor", "windsurf", "vscode", "antigravity"],
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "contextforge": "./dist/bin.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/bin.ts src/index.ts --format esm --dts --tsconfig tsconfig.build.json",
+    "dev": "tsx src/bin.ts",
+    "test": "vitest --run --reporter=verbose",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@contextforge/bootstrapper": "workspace:*",
+    "@contextforge/generator": "workspace:*",
+    "@contextforge/mcp": "workspace:*",
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
+  }
+}

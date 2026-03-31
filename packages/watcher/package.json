@@ -1,0 +1,33 @@
+{
+  "name": "@contextforge/watcher",
+  "description": "ContextForge watcher — filesystem watcher that classifies relevant changes and triggers incremental context updates",
+  "keywords": ["watcher", "filesystem", "chokidar", "conventions"],
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --tsconfig tsconfig.build.json",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest --run --reporter=verbose",
+    "lint": "eslint src",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "chokidar": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
+  }
+}
