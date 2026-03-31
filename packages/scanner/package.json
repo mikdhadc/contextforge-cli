@@ -1,0 +1,41 @@
+{
+  "name": "@contextforge/scanner",
+  "description": "ContextForge scanner — detects project stack, frameworks, and code conventions using tree-sitter AST analysis",
+  "keywords": ["scanner", "conventions", "tree-sitter", "ast", "detection"],
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --tsconfig tsconfig.build.json",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest --run --reporter=verbose",
+    "lint": "eslint src",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
+  },
+  "dependencies": {
+    "tree-sitter": "^0.25.0",
+    "tree-sitter-go": "^0.25.0",
+    "tree-sitter-javascript": "^0.25.0",
+    "tree-sitter-php": "^0.24.2",
+    "tree-sitter-python": "^0.25.0",
+    "tree-sitter-ruby": "^0.23.1",
+    "tree-sitter-rust": "^0.24.0",
+    "tree-sitter-typescript": "^0.23.2",
+    "web-tree-sitter": "^0.26.7"
+  }
+}

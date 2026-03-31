@@ -1,0 +1,30 @@
+{
+  "name": "@contextforge/bootstrapper",
+  "description": "ContextForge bootstrapper — one-time project setup: creates .contextforge/ directory and registers the MCP server with the detected IDE",
+  "keywords": ["bootstrapper", "setup", "mcp", "ide"],
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --tsconfig tsconfig.build.json",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest --run --reporter=verbose",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@contextforge/generator": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
+  }
+}
