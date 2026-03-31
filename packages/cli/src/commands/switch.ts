@@ -4,7 +4,7 @@ import * as path from 'node:path';
 import { IDEFileWriter } from '@contextforge/generator';
 import type { IdeTarget } from '@contextforge/generator';
 
-const VALID_IDES: IdeTarget[] = ['claude-code', 'cursor', 'windsurf', 'vscode', 'antigravity'];
+const VALID_IDES: IdeTarget[] = ['claude-code', 'cursor', 'windsurf', 'vscode', 'antigravity', 'bob'];
 
 export interface SwitchOptions {
   root: string;
@@ -37,7 +37,7 @@ export async function runSwitch(ide: IdeTarget, opts: SwitchOptions): Promise<vo
 export function switchCommand(): Command {
   return new Command('switch')
     .description('Write an IDE-specific file from the current .context.md')
-    .argument('<ide>', 'Target IDE (claude-code|cursor|windsurf|vscode|antigravity)')
+    .argument('<ide>', 'Target IDE (claude-code|cursor|windsurf|vscode|antigravity|bob)')
     .option('--root <dir>', 'Project root', process.cwd())
     .action((ide: string, opts: SwitchOptions) => runSwitch(ide as IdeTarget, opts));
 }

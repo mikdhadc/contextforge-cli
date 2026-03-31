@@ -78,7 +78,7 @@ export function templatesCommand(): Command {
 
   cmd.command('apply [name]')
     .description('Write a template to the IDE slash-command directory')
-    .option('--ide <ide>', 'Override IDE target (claude-code|cursor|windsurf|vscode|antigravity)')
+    .option('--ide <ide>', 'Override IDE target (claude-code|cursor|windsurf|vscode|antigravity|bob)')
     .option('--all', 'Apply all built-in templates at once')
     .option('--root <dir>', 'Project root', process.cwd())
     .action((name: string | undefined, opts: ApplyOptions) => runTemplatesApply(name, opts));

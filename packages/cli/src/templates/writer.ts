@@ -42,6 +42,11 @@ export function getIdeTemplateConfig(ide: IdeTarget, projectRoot: string): IdeTe
         dir: path.join(projectRoot, '.antigravity', 'commands'),
         ext: '.md',
       };
+    case 'bob':
+      return {
+        dir: path.join(projectRoot, '.bob', 'commands'),
+        ext: '.md',
+      };
   }
 }
 

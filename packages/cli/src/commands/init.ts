@@ -118,7 +118,7 @@ function addToGitignore(projectRoot: string, entries: string[]): void {
   console.log(`Added to .gitignore: ${entriesToAdd.join(', ')}`);
 }
 
-const SUPPORTED_IDES: IdeTarget[] = ['claude-code', 'cursor', 'windsurf', 'vscode', 'antigravity'];
+const SUPPORTED_IDES: IdeTarget[] = ['claude-code', 'cursor', 'windsurf', 'vscode', 'antigravity', 'bob'];
 
 export async function runInit(opts: InitOptions): Promise<void> {
   const projectRoot = path.resolve(opts.root);
@@ -173,6 +173,10 @@ export async function runInit(opts: InitOptions): Promise<void> {
       case 'antigravity':
         mcpConfigPath = path.join(projectRoot, '.antigravity', 'mcp.json');
         ideDir = path.join(projectRoot, '.antigravity') + path.sep;
+        break;
+      case 'bob':
+        mcpConfigPath = path.join(projectRoot, '.bob', 'mcp.json');
+        ideDir = path.join(projectRoot, '.bob') + path.sep;
         break;
       // claude-code uses .mcp.json at root (default)
     }
@@ -238,7 +242,7 @@ export async function runInit(opts: InitOptions): Promise<void> {
 export function initCommand(): Command {
   return new Command('init')
     .description('Scan the project and generate .context.md')
-    .option('--ide <ide>', 'Override IDE target (claude-code|cursor|windsurf|vscode|antigravity)')
+    .option('--ide <ide>', 'Override IDE target (claude-code|cursor|windsurf|vscode|antigravity|bob)')
     .option('--force', 'Re-generate even if context is fresh')
     .option('--root <dir>', 'Project root', process.cwd())
     .option('--templates', 'Apply slash command templates (default: true in interactive mode)')

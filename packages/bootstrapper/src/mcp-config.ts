@@ -22,6 +22,7 @@ export function getMcpConfigPath(ide: IdeTarget, projectRoot: string): string {
     case 'windsurf':    return path.join(projectRoot, '.windsurf', 'mcp.json');
     case 'vscode':      return path.join(projectRoot, '.vscode', 'mcp.json');
     case 'antigravity': return path.join(projectRoot, '.antigravity', 'mcp.json');
+    case 'bob':         return path.join(projectRoot, '.bob', 'mcp.json');
   }
 }
 
@@ -29,7 +30,7 @@ export function getMcpConfigPath(ide: IdeTarget, projectRoot: string): string {
  * Reads an existing MCP config (if any), merges the contextforge server entry
  * into it without disturbing other servers, then writes it back.
  *
- * Claude Code / Cursor / Windsurf / Antigravity use `{ mcpServers: { ... } }`.
+ * Claude Code / Cursor / Windsurf / Antigravity / Bob use `{ mcpServers: { ... } }`.
  * VS Code uses `{ servers: { ... } }`.
  */
 export function writeMcpConfig(ide: IdeTarget, projectRoot: string): string {
@@ -53,7 +54,7 @@ export function writeMcpConfig(ide: IdeTarget, projectRoot: string): string {
     const servers = (existing.servers ?? {}) as Record<string, McpServerBlock>;
     existing.servers = { ...servers, contextforge: serverEntry };
   } else {
-    // Claude Code, Cursor, Windsurf, Antigravity use "mcpServers"
+    // Claude Code, Cursor, Windsurf, Antigravity, Bob use "mcpServers"
     const mcpServers = (existing.mcpServers ?? {}) as Record<string, McpServerBlock>;
     existing.mcpServers = { ...mcpServers, contextforge: serverEntry };
   }

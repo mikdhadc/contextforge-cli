@@ -7,7 +7,7 @@ export interface GeneratorInput {
 }
 
 export type SectionName = 'stack' | 'structure' | 'conventions' | 'dependencies' | 'anti-patterns' | 'decisions';
-export type IdeTarget = 'claude-code' | 'cursor' | 'windsurf' | 'vscode' | 'antigravity';
+export type IdeTarget = 'claude-code' | 'cursor' | 'windsurf' | 'vscode' | 'antigravity' | 'bob';
 
 export interface ParsedSection {
   name: string;

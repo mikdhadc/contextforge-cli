@@ -149,6 +149,20 @@ describe('IDEFileWriter', () => {
     expect(writer.detectIde()).toBe('vscode');
   });
 
+  it('detects antigravity IDE from .antigravity/mcp.json', () => {
+    fs.mkdirSync(path.join(tmpDir, '.antigravity'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, '.antigravity', 'mcp.json'), '{}');
+    const writer = new IDEFileWriter(tmpDir);
+    expect(writer.detectIde()).toBe('antigravity');
+  });
+
+  it('detects bob IDE from .bob/mcp.json', () => {
+    fs.mkdirSync(path.join(tmpDir, '.bob'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, '.bob', 'mcp.json'), '{}');
+    const writer = new IDEFileWriter(tmpDir);
+    expect(writer.detectIde()).toBe('bob');
+  });
+
   it('detects claude-code IDE from .claude directory', () => {
     fs.mkdirSync(path.join(tmpDir, '.claude'), { recursive: true });
     fs.writeFileSync(path.join(tmpDir, '.claude', 'settings.json'), '{}');
@@ -190,6 +204,19 @@ describe('IDEFileWriter', () => {
     expect(fs.existsSync(path.join(tmpDir, '.github', 'copilot-instructions.md'))).toBe(true);
   });
 
+  it('writes .antigravity-context.md for antigravity', () => {
+    const writer = new IDEFileWriter(tmpDir);
+    writer.write('antigravity', '# Context\nHello');
+    expect(fs.existsSync(path.join(tmpDir, '.antigravity-context.md'))).toBe(true);
+  });
+
+  it('writes .bob/context.md for bob', () => {
+    const writer = new IDEFileWriter(tmpDir);
+    writer.write('bob', '# Context\nHello');
+    expect(fs.existsSync(path.join(tmpDir, '.bob', 'context.md'))).toBe(true);
+    expect(fs.readFileSync(path.join(tmpDir, '.bob', 'context.md'), 'utf8')).toContain('Hello');
+  });
+
   it('strips section delimiters when formatting for IDE', () => {
     const writer = new IDEFileWriter(tmpDir);
     const input = wrapSection('stack', 'abc', '## Stack\nTypeScript');
@@ -227,5 +254,26 @@ describe('IDEFileWriter', () => {
     expect(writer.getTargetPath('cursor')).toBe(path.join(tmpDir, '.cursorrules'));
     expect(writer.getTargetPath('windsurf')).toBe(path.join(tmpDir, '.windsurfrules'));
     expect(writer.getTargetPath('vscode')).toBe(path.join(tmpDir, '.github', 'copilot-instructions.md'));
+    expect(writer.getTargetPath('antigravity')).toBe(path.join(tmpDir, '.antigravity-context.md'));
+    expect(writer.getTargetPath('bob')).toBe(path.join(tmpDir, '.bob', 'context.md'));
+  });
+
+  it('detects bob IDE from CONTEXTFORGE_IDE env var', () => {
+    process.env.CONTEXTFORGE_IDE = 'bob';
+    const writer = new IDEFileWriter(tmpDir);
+    expect(writer.detectIde()).toBe('bob');
+    delete process.env.CONTEXTFORGE_IDE;
+  });
+
+  it('prioritizes env var over file detection for bob', () => {
+    // Create cursor config
+    fs.mkdirSync(path.join(tmpDir, '.cursor'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, '.cursor', 'mcp.json'), '{}');
+    
+    // But env var says bob
+    process.env.CONTEXTFORGE_IDE = 'bob';
+    const writer = new IDEFileWriter(tmpDir);
+    expect(writer.detectIde()).toBe('bob');
+    delete process.env.CONTEXTFORGE_IDE;
   });
 });

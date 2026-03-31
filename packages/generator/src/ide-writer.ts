@@ -8,13 +8,14 @@ export class IDEFileWriter {
   detectIde(): IdeTarget | null {
     // 1. Check env var
     const envIde = process.env.CONTEXTFORGE_IDE as IdeTarget | undefined;
-    if (envIde && ['claude-code', 'cursor', 'windsurf', 'vscode', 'antigravity'].includes(envIde)) return envIde;
+    if (envIde && ['claude-code', 'cursor', 'windsurf', 'vscode', 'antigravity', 'bob'].includes(envIde)) return envIde;
 
     // 2. Check config file presence
     if (fs.existsSync(path.join(this.projectRoot, '.cursor', 'mcp.json'))) return 'cursor';
     if (fs.existsSync(path.join(this.projectRoot, '.windsurf', 'mcp.json'))) return 'windsurf';
     if (fs.existsSync(path.join(this.projectRoot, '.vscode', 'mcp.json'))) return 'vscode';
     if (fs.existsSync(path.join(this.projectRoot, '.antigravity', 'mcp.json'))) return 'antigravity';
+    if (fs.existsSync(path.join(this.projectRoot, '.bob', 'mcp.json'))) return 'bob';
     if (fs.existsSync(path.join(this.projectRoot, '.claude'))) return 'claude-code';
 
     return null;
@@ -33,6 +34,7 @@ export class IDEFileWriter {
       case 'windsurf': return path.join(this.projectRoot, '.windsurfrules');
       case 'vscode': return path.join(this.projectRoot, '.github', 'copilot-instructions.md');
       case 'antigravity': return path.join(this.projectRoot, '.antigravity-context.md');
+      case 'bob': return path.join(this.projectRoot, '.bob', 'context.md');
     }
   }
 

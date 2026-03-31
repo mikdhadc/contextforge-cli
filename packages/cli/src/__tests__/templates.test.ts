@@ -69,6 +69,20 @@ describe('getIdeTemplateConfig', () => {
     expect(cfg.ext).toBe('.instructions.md');
     expect(cfg.preamble).toContain('applyTo');
   });
+
+  it('antigravity uses .antigravity/commands with .md extension', () => {
+    const cfg = getIdeTemplateConfig('antigravity', root);
+    expect(cfg.dir).toBe('/project/.antigravity/commands');
+    expect(cfg.ext).toBe('.md');
+    expect(cfg.preamble).toBeUndefined();
+  });
+
+  it('bob uses .bob/commands with .md extension', () => {
+    const cfg = getIdeTemplateConfig('bob', root);
+    expect(cfg.dir).toBe('/project/.bob/commands');
+    expect(cfg.ext).toBe('.md');
+    expect(cfg.preamble).toBeUndefined();
+  });
 });
 
 describe('writeTemplate', () => {
@@ -108,9 +122,27 @@ describe('writeTemplate', () => {
     expect(content).toContain('applyTo');
   });
 
+  it('writes feature.md to .bob/commands for bob', () => {
+    const result = writeTemplate('feature', TEMPLATE_CONTENT.feature, 'bob', tmpDir);
+    expect(result.filePath).toContain('.bob/commands/feature.md');
+    expect(fs.existsSync(result.filePath)).toBe(true);
+  });
+
+  it('bob file does not get frontmatter prepended', () => {
+    const result = writeTemplate('feature', TEMPLATE_CONTENT.feature, 'bob', tmpDir);
+    const content = fs.readFileSync(result.filePath, 'utf8');
+    expect(content.startsWith('---')).toBe(false);
+    expect(content).toContain('# Feature');
+  });
+
   it('creates parent directories if they do not exist', () => {
     writeTemplate('bugfix', TEMPLATE_CONTENT.bugfix, 'claude-code', tmpDir);
     expect(fs.existsSync(path.join(tmpDir, '.claude', 'commands'))).toBe(true);
+  });
+
+  it('creates .bob/commands directory for bob IDE', () => {
+    writeTemplate('refactor', TEMPLATE_CONTENT.refactor, 'bob', tmpDir);
+    expect(fs.existsSync(path.join(tmpDir, '.bob', 'commands'))).toBe(true);
   });
 });
 
@@ -139,6 +171,23 @@ describe('runTemplatesApply', () => {
         `Missing ${t.name}.md`,
       ).toBe(true);
     }
+  });
+
+  it('writes all templates for bob IDE when --all is set', () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    runTemplatesApply(undefined, { ide: 'bob', root: tmpDir, all: true });
+    for (const t of BUILTIN_TEMPLATES) {
+      expect(
+        fs.existsSync(path.join(tmpDir, '.bob', 'commands', `${t.name}.md`)),
+        `Missing ${t.name}.md for bob`,
+      ).toBe(true);
+    }
+  });
+
+  it('writes a single named template for bob with explicit --ide', () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    runTemplatesApply('bugfix', { ide: 'bob', root: tmpDir });
+    expect(fs.existsSync(path.join(tmpDir, '.bob', 'commands', 'bugfix.md'))).toBe(true);
   });
 
   it('exits 1 for unknown template name', () => {

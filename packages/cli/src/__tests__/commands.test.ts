@@ -110,6 +110,20 @@ describe('runSwitch', () => {
     expect(fs.existsSync(path.join(tmpDir, '.github', 'copilot-instructions.md'))).toBe(true);
   });
 
+  it('writes .antigravity-context.md when switching to antigravity', async () => {
+    fs.writeFileSync(path.join(tmpDir, '.context.md'), '# Project Context\n\nSome content.\n');
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    await runSwitch('antigravity', { root: tmpDir });
+    expect(fs.existsSync(path.join(tmpDir, '.antigravity-context.md'))).toBe(true);
+  });
+
+  it('writes .bob/context.md when switching to bob', async () => {
+    fs.writeFileSync(path.join(tmpDir, '.context.md'), '# Project Context\n\nSome content.\n');
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    await runSwitch('bob', { root: tmpDir });
+    expect(fs.existsSync(path.join(tmpDir, '.bob', 'context.md'))).toBe(true);
+  });
+
   it('preserves content when switching IDEs', async () => {
     const content = '# Project Context\n\nMy important content.\n';
     fs.writeFileSync(path.join(tmpDir, '.context.md'), content);
@@ -128,10 +142,23 @@ describe('runSwitch', () => {
     expect(written).not.toContain('contextforge:stack:start');
     expect(written).toContain('## Stack');
   });
+
+  it('strips contextforge delimiters when switching to bob', async () => {
+    const content = '<!-- contextforge:conventions:start hash="xyz" -->\n## Conventions\ncamelCase\n<!-- contextforge:conventions:end -->\n';
+    fs.writeFileSync(path.join(tmpDir, '.context.md'), content);
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    await runSwitch('bob', { root: tmpDir });
+    const written = fs.readFileSync(path.join(tmpDir, '.bob', 'context.md'), 'utf8');
+    expect(written).not.toContain('contextforge:conventions:start');
+    expect(written).toContain('## Conventions');
+    expect(written).toContain('camelCase');
+  });
 });
 
 describe('runTemplatesList', () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('prints all builtin template names', () => {
     const lines: string[] = [];
