@@ -323,5 +323,6 @@ See also: [Code of Conduct](CODE_OF_CONDUCT.md) · [Security Policy](SECURITY.md
 <table>
   <tr>
     <td align="center"><a href="https://github.com/beethovkjfe"><img src="https://avatars.githubusercontent.com/u/88784181?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Beethov KJ</b></sub></a></td>
+    <td align="center"><a href="https://github.com/mikdhadc"><img src="https://avatars.githubusercontent.com/u/54241506?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mohammed Mikdhad C</b></sub></a></td>
     </tr>
     </table>
