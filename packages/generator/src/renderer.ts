@@ -263,6 +263,72 @@ function readGemfile(root: string): string[] {
   }
 }
 
+function readPomXml(root: string): string[] {
+  try {
+    const content = fs.readFileSync(path.join(root, 'pom.xml'), 'utf8');
+    const lines: string[] = [];
+    let inDeps = false;
+    let currentDep = '';
+    
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      
+      if (trimmed === '<dependencies>') {
+        inDeps = true;
+        continue;
+      }
+      if (trimmed === '</dependencies>') break;
+      
+      if (inDeps) {
+        if (trimmed === '<dependency>') {
+          currentDep = '';
+        } else if (trimmed === '</dependency>') {
+          if (currentDep) lines.push(`- ${currentDep}`);
+          currentDep = '';
+        } else if (trimmed.startsWith('<groupId>')) {
+          const groupId = trimmed.replace(/<\/?groupId>/g, '');
+          currentDep = groupId;
+        } else if (trimmed.startsWith('<artifactId>')) {
+          const artifactId = trimmed.replace(/<\/?artifactId>/g, '');
+          if (currentDep) currentDep += ':' + artifactId;
+        } else if (trimmed.startsWith('<version>')) {
+          const version = trimmed.replace(/<\/?version>/g, '');
+          if (currentDep) currentDep += ':' + version;
+        }
+      }
+    }
+    return lines.slice(0, 10);
+  } catch {
+    return [];
+  }
+}
+
+function readGradleDeps(root: string): string[] {
+  const gradleFiles = ['build.gradle', 'build.gradle.kts'];
+  
+  for (const gradleFile of gradleFiles) {
+    try {
+      const content = fs.readFileSync(path.join(root, gradleFile), 'utf8');
+      const lines: string[] = [];
+      
+      for (const line of content.split('\n')) {
+        const trimmed = line.trim();
+        // Match implementation, api, compile, etc.
+        const depMatch = trimmed.match(/(?:implementation|api|compile|testImplementation|runtimeOnly)\s*[("']([^"']+)["')]/);
+        if (depMatch) {
+          lines.push(`- ${depMatch[1]}`);
+        }
+      }
+      
+      if (lines.length > 0) return lines.slice(0, 10);
+    } catch {
+      continue;
+    }
+  }
+  
+  return [];
+}
+
 function renderDependenciesForLang(lang: LanguageContext): string[] {
   const { language, root } = lang;
   switch (language) {
@@ -281,6 +347,10 @@ function renderDependenciesForLang(lang: LanguageContext): string[] {
       return readComposerJson(root);
     case 'ruby':
       return readGemfile(root);
+    case 'java': {
+      const pomDeps = readPomXml(root);
+      return pomDeps.length > 0 ? pomDeps : readGradleDeps(root);
+    }
     default:
       return [];
   }

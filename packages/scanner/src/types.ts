@@ -1,4 +1,4 @@
-export type Language = 'javascript' | 'typescript' | 'python' | 'go' | 'rust' | 'php' | 'ruby';
+export type Language = 'javascript' | 'typescript' | 'python' | 'go' | 'rust' | 'php' | 'ruby' | 'java';
 
 export type JsFramework = 'react' | 'next.js' | 'express' | 'nestjs' | 'vue' | 'svelte';
 export type PyFramework = 'fastapi' | 'django' | 'flask';
@@ -6,7 +6,8 @@ export type GoFramework = 'gin' | 'echo';
 export type RustFramework = 'actix' | 'axum';
 export type PhpFramework = 'laravel' | 'symfony';
 export type RubyFramework = 'rails' | 'sinatra';
-export type Framework = JsFramework | PyFramework | GoFramework | RustFramework | PhpFramework | RubyFramework;
+export type JavaFramework = 'spring-boot' | 'spring' | 'quarkus' | 'micronaut';
+export type Framework = JsFramework | PyFramework | GoFramework | RustFramework | PhpFramework | RubyFramework | JavaFramework;
 
 export type PackageManager =
   | 'npm' | 'pnpm' | 'yarn' | 'bun'          // JS
@@ -14,7 +15,8 @@ export type PackageManager =
   | 'go mod'                                   // Go
   | 'cargo'                                    // Rust
   | 'composer'                                 // PHP
-  | 'bundler';                                 // Ruby
+  | 'bundler'                                  // Ruby
+  | 'maven' | 'gradle' | 'ant';                // Java
 
 export interface LanguageContext {
   language: Language;

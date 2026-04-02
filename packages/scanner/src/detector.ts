@@ -11,6 +11,7 @@ const LANGUAGE_SIGNATURES: Record<Language, string[]> = {
   rust: ['Cargo.toml'],
   php: ['composer.json'],
   ruby: ['Gemfile'],
+  java: ['pom.xml', 'build.gradle', 'build.gradle.kts', 'build.xml'],
 };
 
 export class ProjectDetector {
@@ -40,7 +41,7 @@ export class ProjectDetector {
 
     // Check other languages
     const otherLanguages: Array<Exclude<Language, 'javascript' | 'typescript'>> = [
-      'python', 'go', 'rust', 'php', 'ruby',
+      'python', 'go', 'rust', 'php', 'ruby', 'java',
     ];
 
     for (const lang of otherLanguages) {
@@ -174,6 +175,8 @@ export class ProjectDetector {
         return this.detectPhpFrameworks(dir);
       case 'ruby':
         return this.detectRubyFrameworks(dir);
+      case 'java':
+        return this.detectJavaFrameworks(dir);
     }
   }
 
@@ -285,6 +288,45 @@ export class ProjectDetector {
     return frameworks;
   }
 
+  private detectJavaFrameworks(dir: string): Framework[] {
+    const frameworks: Framework[] = [];
+    
+    // Check pom.xml (Maven)
+    const pomPath = path.join(dir, 'pom.xml');
+    if (fs.existsSync(pomPath)) {
+      try {
+        const content = fs.readFileSync(pomPath, 'utf8').toLowerCase();
+        if (content.includes('spring-boot-starter')) frameworks.push('spring-boot');
+        else if (content.includes('org.springframework')) frameworks.push('spring');
+        if (content.includes('quarkus')) frameworks.push('quarkus');
+        if (content.includes('micronaut')) frameworks.push('micronaut');
+        if (frameworks.length > 0) return frameworks;
+      } catch {
+        // ignore
+      }
+    }
+    
+    // Check build.gradle or build.gradle.kts (Gradle)
+    const gradleFiles = ['build.gradle', 'build.gradle.kts'];
+    for (const gradleFile of gradleFiles) {
+      const gradlePath = path.join(dir, gradleFile);
+      if (fs.existsSync(gradlePath)) {
+        try {
+          const content = fs.readFileSync(gradlePath, 'utf8').toLowerCase();
+          if (content.includes('spring-boot-starter') || content.includes('org.springframework.boot')) frameworks.push('spring-boot');
+          else if (content.includes('org.springframework')) frameworks.push('spring');
+          if (content.includes('quarkus')) frameworks.push('quarkus');
+          if (content.includes('micronaut')) frameworks.push('micronaut');
+          if (frameworks.length > 0) return frameworks;
+        } catch {
+          // ignore
+        }
+      }
+    }
+    
+    return frameworks;
+  }
+
   // ----- Package manager detection -----
 
   private detectPackageManager(language: Language, dir: string): PackageManager | null {
@@ -311,6 +353,12 @@ export class ProjectDetector {
         return 'composer';
       case 'ruby':
         return 'bundler';
+      case 'java': {
+        if (fs.existsSync(path.join(dir, 'pom.xml'))) return 'maven';
+        if (fs.existsSync(path.join(dir, 'build.gradle')) || fs.existsSync(path.join(dir, 'build.gradle.kts'))) return 'gradle';
+        if (fs.existsSync(path.join(dir, 'build.xml'))) return 'ant';
+        return null;
+      }
     }
   }
 
@@ -349,6 +397,20 @@ export class ProjectDetector {
         } catch {
           return false;
         }
+      }
+      case 'java': {
+        // Check if pom.xml has <modules> or if multiple pom.xml exist in subdirs
+        const pomPath = path.join(dir, 'pom.xml');
+        if (fs.existsSync(pomPath)) {
+          try {
+            const content = fs.readFileSync(pomPath, 'utf8');
+            if (content.includes('<modules>')) return true;
+          } catch {
+            // ignore
+          }
+        }
+        // Check for multiple build files in subdirs
+        return this.hasMultipleFilesInSubdirs(dir, ['pom.xml', 'build.gradle', 'build.gradle.kts']);
       }
       default:
         return false;

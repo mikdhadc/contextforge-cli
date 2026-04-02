@@ -7,6 +7,7 @@ import { detectGoConventions } from './detectors/go.js';
 import { detectRustConventions } from './detectors/rust.js';
 import { detectPhpConventions } from './detectors/php.js';
 import { detectRubyConventions } from './detectors/ruby.js';
+import { detectJavaConventions } from './detectors/java.js';
 import { walkFiles } from './walk.js';
 
 const LANGUAGE_EXTENSIONS: Record<string, string[]> = {
@@ -17,6 +18,7 @@ const LANGUAGE_EXTENSIONS: Record<string, string[]> = {
   rust: ['.rs'],
   php: ['.php'],
   ruby: ['.rb'],
+  java: ['.java'],
 };
 
 export class ConventionScanner {
@@ -53,6 +55,8 @@ export class ConventionScanner {
         return detectPhpConventions(ctx, files);
       case 'ruby':
         return detectRubyConventions(ctx, files);
+      case 'java':
+        return detectJavaConventions(ctx, files);
     }
   }
 
